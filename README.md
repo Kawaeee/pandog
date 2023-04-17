@@ -2,7 +2,6 @@
 
 Wrapped [pandoc](https://pandoc.org), universal document converter using Rust.
 
-
 ## Getting Started
 
 * Clone the repository
@@ -31,3 +30,10 @@ docker run --rm --name=pandog-api-container -p 0.0.0.0:8080:7878 pandog-api-imag
 docker-compose build
 docker-compose up
 ```
+
+## Supported conversion
+| type | markdown | html | latex |
+|---|---|---|---|
+| markdown |  | ✅ | ✅ |
+| html | ✅ |  | ✅ |
+| latex | ✅ | ✅ |  |

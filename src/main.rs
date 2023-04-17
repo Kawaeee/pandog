@@ -16,13 +16,12 @@ use std::collections::HashMap;
 async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, MultipartError> {
     let mut fields: HashMap<String, String> = HashMap::new();
 
-    let directory = Builder::new().prefix("pandoc-input-").rand_bytes(8).tempdir().unwrap();
+    let directory = Builder::new().prefix("pandoc-processor-").rand_bytes(8).tempdir().unwrap();
+    let input_tmp_path = directory.path().join("input");
+    let output_tmp_path = directory.path().join("output");
 
     while let Some(item) = payload.next().await {
         let mut field = item?;
-
-        let _content_type = field.content_type();
-        let _content_disposition = field.content_disposition();
         let field_name = String::from(field.name());
     
         let text_fields = vec!["input_format", "output_format"];
@@ -51,9 +50,7 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
     }
 
     // Preparing tmp output file
-    let output_tmp_path = directory.path().join("output");
     let output_tmp_file = File::create(output_tmp_path.clone()).unwrap();
-
     fields.insert(String::from("output_file"), output_tmp_path.to_str().unwrap().to_string());
 
     let input_file_path = PathBuf::from(fields.get("input_file").unwrap());
@@ -62,13 +59,15 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
     let output_format = fields.get("output_format").unwrap();
 
     // Debugging
-    println!("Temporary input file: {:?}", fields.get("input_file").unwrap());
-    println!("Temporary output file: {:?}", fields.get("output_file").unwrap());
-    println!("Input format: {:?}", input_format);
-    println!("Output format: {:?}", output_format);
+    // println!("Temporary input file: {:?}", fields.get("input_file").unwrap());
+    // println!("Temporary output file: {:?}", fields.get("output_file").unwrap());
+    // println!("Input format: {:?}", input_format);
+    // println!("Output format: {:?}", output_format);
 
     match convert_file(&input_file_path, input_format, &output_file_path, output_format) {
         Ok(_) => {
+            // This will not work on binary file type
+            // TODO: support all types
             let response_body = std::fs::read_to_string(&output_file_path)
                 .unwrap_or_else(|_| String::from("Unable to read output file"));
     
