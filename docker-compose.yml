@@ -3,4 +3,4 @@ services:
   api-container:
     build: .
     ports:
-      - "7878:8080"
+      - "8080:7878"

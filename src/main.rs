@@ -45,7 +45,7 @@ async fn convert_route(request: web::Json<ConvertRequest>) -> impl Responder{
 
 #[get("/")]
 async fn hello_route() -> impl Responder {
-    HttpResponse::Ok().body("Welcome to pandoc web service!")
+    HttpResponse::Ok().body("Welcome to pandog web service!")
 }
 
 #[actix_web::main]

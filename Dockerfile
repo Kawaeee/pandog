@@ -7,7 +7,9 @@ COPY . .
 # Build rust binary
 RUN cargo build --release
 
-FROM ubuntu:bionic as deployer
+FROM ubuntu:jammy as deployer
+
+WORKDIR /app
 
 ENV LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,6 +25,6 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN apt autoclean
 RUN apt autoremove
 
-COPY --from=builder /app/target/release/pandog /app
+COPY --from=builder /app/target/release/pandog /app/pandog
 
 CMD ["/app/pandog"]
