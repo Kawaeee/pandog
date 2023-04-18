@@ -31,9 +31,16 @@ docker-compose build
 docker-compose up
 ```
 
+* Call a conversion API using `curl` or Postman
+```bash
+curl -X POST -F "input_file=@/path/to/input/file.md" -F "input_format=markdown" -F "output_format=html" http://localhost:8080/convert
+
 ## Supported conversion
-| type | markdown | html | latex |
-|---|---|---|---|
-| markdown |  | ✅ | ✅ |
-| html | ✅ |  | ✅ |
-| latex | ✅ | ✅ |  |
+| I/O      | html | ipynb | latex | markdown | pdf | plain |
+|----------|------|-------|-------|----------|-----|-------|
+| csv      | x    | x     | x     | x        | x   | x     |
+| html     |      | x     | x     | x        | x   | x     |
+| ipynb    | x    |       | x     | x        | x   | x     |
+| latex    | x    | x     |       | x        | x   | x     |
+| markdown | x    | x     | x     |          | x   | x     |
+| tsv      | x    | x     | x     | x        | x   | x     |
