@@ -41,13 +41,13 @@ curl -X POST -F "input_file=@/path/to/input/file.md" -F "input_format=markdown" 
 ## Supported conversion
 - We only support partial pandoc conversion. For now, it is not supported as a binary file output as a response.
 
-| I/O      | html | ipynb | latex | markdown | pdf | plain |
-|----------|------|-------|-------|----------|-----|-------|
-| csv      | x    | x     | x     | x        | x   | x     |
-| html     |      | x     | x     | x        | x   | x     |
-| ipynb    | x    |       | x     | x        | x   | x     |
-| latex    | x    | x     |       | x        | x   | x     |
-| markdown | x    | x     | x     |          | x   | x     |
-| tsv      | x    | x     | x     | x        | x   | x     |
+| I/O      | html | ipynb | latex | markdown | plain |
+|----------|------|-------|-------|----------|-------|
+| csv      | x    | x     | x     | x        | x     |
+| html     |      | x     | x     | x        | x     |
+| ipynb    | x    |       | x     | x        | x     |
+| latex    | x    | x     |       | x        | x     |
+| markdown | x    | x     | x     |          | x     |
+| tsv      | x    | x     | x     | x        | x     |
 
-> For all conversion support, try [pandoc playground](https://pandoc.org/try/)!
+> For all fully conversion support, try [pandoc playground](https://pandoc.org/try/)!
