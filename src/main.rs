@@ -3,14 +3,17 @@ use crate::converter::convert_file;
 
 use env_logger;
 use std::path::PathBuf;
-use actix_web::{get, post, web, App, HttpServer, HttpResponse, Responder, middleware::Logger};
+use actix_web::{post, App, HttpServer, HttpResponse, middleware::Logger};
 use actix_multipart::{Multipart, MultipartError};
 use futures_util::StreamExt;
 use std::io::Write;
 use std::fs::File;
 use tempfile::Builder;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
+
+const INPUT_VALID_FORMATS: [&str; 6] = ["csv", "html", "ipynb", "latex", "markdown", "tsv"];
+const OUTPUT_VALID_FORMATS: [&str; 5] = ["html", "ipynb", "latex", "markdown", "plain"];
 
 #[post("/convert")]
 async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, MultipartError> {
@@ -26,7 +29,7 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
     
         let text_fields = vec!["input_format", "output_format"];
         let file_fields = vec!["input_file"];
-
+        
         if text_fields.contains(&field_name.as_str()){
             let mut text_value = String::new();
 
@@ -37,7 +40,6 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
 
             fields.insert(field_name.to_string(), text_value);
         } else if file_fields.contains(&field_name.as_str()){
-            let input_tmp_path = directory.path().join("input");
             let mut input_tmp_file = File::create(input_tmp_path.clone()).unwrap();
 
             while let Some(chunk) = field.next().await {
@@ -50,7 +52,7 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
     }
 
     // Preparing tmp output file
-    let output_tmp_file = File::create(output_tmp_path.clone()).unwrap();
+    let _output_tmp_file = File::create(output_tmp_path.clone()).unwrap();
     fields.insert(String::from("output_file"), output_tmp_path.to_str().unwrap().to_string());
 
     let input_file_path = PathBuf::from(fields.get("input_file").unwrap());
@@ -58,16 +60,23 @@ async fn convert_route(mut payload: Multipart) -> Result<HttpResponse, Multipart
     let input_format = fields.get("input_format").unwrap();
     let output_format = fields.get("output_format").unwrap();
 
-    // Debugging
-    // println!("Temporary input file: {:?}", fields.get("input_file").unwrap());
-    // println!("Temporary output file: {:?}", fields.get("output_file").unwrap());
-    // println!("Input format: {:?}", input_format);
-    // println!("Output format: {:?}", output_format);
+    let validation_input_format = input_format.to_string();
+    let validation_output_format = output_format.to_string();
+
+    let input_valid_formats: HashSet<String> = INPUT_VALID_FORMATS.iter().map(|s| s.to_string()).collect();
+    let output_valid_formats: HashSet<String> = OUTPUT_VALID_FORMATS.iter().map(|s| s.to_string()).collect();
+    
+    if !input_valid_formats.contains(&validation_input_format) {
+        return Err(MultipartError::UnsupportedField("Invalid input format".to_string()));
+    }
+
+    if !output_valid_formats.contains(&validation_output_format) {
+        return Err(MultipartError::UnsupportedField("Invalid output format".to_string()));
+    }
 
     match convert_file(&input_file_path, input_format, &output_file_path, output_format) {
         Ok(_) => {
-            // This will not work on binary file type
-            // TODO: support all types
+            // TODO AS AN ENHANCEMENT: support all types, this will not work on binary file type
             let response_body = std::fs::read_to_string(&output_file_path)
                 .unwrap_or_else(|_| String::from("Unable to read output file"));
     

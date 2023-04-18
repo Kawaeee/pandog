@@ -1,5 +1,7 @@
 # pandog (🐼🐶)
 
+> Disclaimer: This project is how I learned rust programming as a hobby. It might have a bad practice code or even not be fully functional at all.
+
 Wrapped [pandoc](https://pandoc.org), universal document converter using Rust.
 
 ## Getting Started
@@ -34,8 +36,11 @@ docker-compose up
 * Call a conversion API using `curl` or Postman
 ```bash
 curl -X POST -F "input_file=@/path/to/input/file.md" -F "input_format=markdown" -F "output_format=html" http://localhost:8080/convert
+```
 
 ## Supported conversion
+- We only support partial pandoc conversion. For now, it is not supported as a binary file output as a response.
+
 | I/O      | html | ipynb | latex | markdown | pdf | plain |
 |----------|------|-------|-------|----------|-----|-------|
 | csv      | x    | x     | x     | x        | x   | x     |
@@ -44,3 +49,5 @@ curl -X POST -F "input_file=@/path/to/input/file.md" -F "input_format=markdown" 
 | latex    | x    | x     |       | x        | x   | x     |
 | markdown | x    | x     | x     |          | x   | x     |
 | tsv      | x    | x     | x     | x        | x   | x     |
+
+> For all conversion support, try [pandoc playground](https://pandoc.org/try/)!
