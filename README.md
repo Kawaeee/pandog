@@ -8,7 +8,7 @@ Wrapped [pandoc](https://pandoc.org), universal document converter using Rust.
 
 * Clone the repository
 ```bash
-git clone git@github.com:kawaeee/pandog.git
+git clone git@github.com:Kawaeee/pandog.git
 cd pandog/
 ```
 
@@ -17,7 +17,7 @@ cd pandog/
 cargo run
 ```
 
-* Build `pandog` binary using cargo
+* Build `pandog` executable binary
 ```bash
 cargo build --release
 ```
